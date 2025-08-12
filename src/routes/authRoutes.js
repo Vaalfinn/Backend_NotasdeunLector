@@ -1,14 +1,16 @@
 /* AUTH ROUTE */
 const express = require('express')
 const router = express.Router()
-const authController = require('../controllers/authController')
-const authController = require('../controllers/userController')
-const validation = require('../middlewares/validator')
-const { loginUser, verifyMfaCode, updatePassword } = require('../services/authService')
+const userController = require('../controllers/userController');
+const authController = require('../controllers/authController');
+const {
+    validateUserRegistration,
+    validateUserLogin
+} = require('../validators/userValidator')
 
 router
-    .post('/register', validation.validateUserRegistration, authController.registerUser)
-    .post('/login', validation.validateUserLogin, authController.loginUser)
+    .post('/register', validateUserRegistration, authController.registerUser)
+    .post('/login', validateUserLogin, authController.loginUser)
     .post('/send-verification-code', authController.sendVerificationCode)
     .post('/verify-code', authController.verifyCode)
     .post('/request-password-reset', authController.requestPasswordReset)

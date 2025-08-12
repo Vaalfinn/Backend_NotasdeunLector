@@ -4,14 +4,20 @@ const UserModel = require('../models/userModel')
 // Middleware para verificar rol
 const checkRole = (roles) => {
     return (req, res, next) => {
-        const user = req.user
+        const user = req.user;
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: 'Usuario no autenticado',
+            });
+        }
 
         if (!user || !roles.includes(user.rol)) {
             return res.status(403).json({
                 message: 'No tienes pemiso para realizar esta accion (rol)'
-            })
+            });
         }
-        next()
+        next();
     }
 }
 // Middleware para verificar permisos específicos

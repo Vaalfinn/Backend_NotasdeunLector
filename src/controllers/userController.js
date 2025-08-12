@@ -1,3 +1,4 @@
+/* USER CONTROLLER */
 const userService = require('../services/userServices')
 const jwt = require('jsonwebtoken')
 

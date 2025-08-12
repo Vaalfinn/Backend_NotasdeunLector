@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
@@ -11,9 +12,14 @@ connection();
 
 // IMPORAR RUTAS
 const userRoute = require("./routes/userRoutes");
+const notaRoute = require("./routes/notaRoutes");
+const authRoute = require("./routes/authRoutes");
+
 
 // INICIALIZAR LA APLICACIÓN
 const app = express();
+//RUTAS 
+
 
 // CAPA DE SEGURIDAD
 app.use(helmet());
@@ -35,11 +41,11 @@ const limiter = rateLimit({
 // APLICAR EL LÍMITE DE PETICIONES A TODAS LAS RUTAS
 app.use(limiter)
 app.use(cors({
-    origin: 'http://localhost:3000', // Update with your frontend URL
+    origin: 'http://localhost:4200', // Update with your frontend URL
     credentials: true
 }))
 app.use(bodyParser.json())
-
+// CERTIFICACADOS (OPCIONAL SI USAS HTTPS LOCAL)
 const opinion = {
     key: fs.readFileSync('key.pem'),
     cert: fs.readFileSync('cert.pem')
@@ -50,8 +56,10 @@ app.get("/", (req, res) => {
     res.send("Bienvenido a Notas de un lector");
 });
 
-// RUTAS
+// RUTAS(AQUI EST LO IMPORTANTE PARA LA CONECCION)
 app.use("/api/users", userRoute);
+app.use("/api/notas", notaRoute);
+app.use("/api/auth", authRoute);
 
 // INICIAR EL SERVIDOR
 app.listen(PORT, () => {
@@ -60,5 +68,6 @@ app.listen(PORT, () => {
 
 // RUTAS QUE NO EXISTEN
 app.use((req, res, next) => {
+
     res.status(404).send("Ruta no encontrada");
 });

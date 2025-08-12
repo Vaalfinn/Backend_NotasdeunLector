@@ -6,20 +6,23 @@ const jwt = require('jsonwebtoken')
 // REGISTER USER CON CONTRASEÑA HASHEADA
 const registerUser = async (req, res) => {
     try {
-        const { nombre, email, password } = req.body
+        const { nombre, email, password, rol } = req.body;
 
         // Validar datos obligatorios
         if (!nombre || !email || !password) {
-            return res.status(400).json({ success: false, message: 'Todos Los Campos Son Obligatorios' })
+            return res.status(400).json({ success: false, message: 'Todos Los Campos Son Obligatorios' });
         }
+        // Usar rol por defecto si no se envía
+        const userRol = rol ? rol : 'CLIENTE';
 
         // Registrar usuario
-        const user = await authProcess.registerUser(nombre, email, password)
+        const user = await authProcess.registerUser(nombre, email, password, userRol);
 
-        res.status(201).json({ success: true, message: 'Usuario Registrado', user })
+        res.status(201).json({ success: true, message: 'Usuario Registrado', user });
     } catch (error) {
-        console.error('Error Al Registrar El Usuario:', error)
-        res.status(400).json({ success: false, message: 'Error Interno Del Servidor' })
+        console.error('Error Al Registrar El Usuario:', error);
+        // Mostrar el mensaje real del error
+        res.status(400).json({ success: false, message: error.message });
     }
 }
 
@@ -37,7 +40,7 @@ const loginUser = async (req, res) => {
         const user = await authProcess.loginUser(email, password)
 
         // Generar token
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN })
+        const token = jwt.sign({ id: user._id, rol: user.rol }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
 
         res.status(200).json({ success: true, message: 'Inicio De Sesión Exitoso', token, user })
     } catch (error) {

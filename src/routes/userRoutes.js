@@ -41,7 +41,6 @@ router.put('/usuario/:id',
     checkPermission('UPDATE'),
     userController.updateUser
 )
-
 //Eliminar un usuario(solo admin)
 router.delete('/usuario/:id',
     authMiddleware,
@@ -59,6 +58,4 @@ router.post('/login',
     validation.validateUserLogin,
     userController.loginUser
 )
-
-
 module.exports = router
